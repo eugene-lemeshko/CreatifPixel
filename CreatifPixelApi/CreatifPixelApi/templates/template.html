@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Schema</title>
+</head>
+
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Assistant&display=swap');
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: 0;
+        }
+
+        .container {
+            font-family: Assistant;
+            color: #333;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-container {
+            width: 100%;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+        }
+
+        .title-elements {
+            width: 1024px;
+            max-width: 1024px;
+            min-width: 1024px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title,
+        .email {
+            font-size: 32px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .email {
+            font-size: 18px;
+        }
+
+        .page-number-container {
+            width: 100%;
+            min-height: 80px;
+            background-color: #e16144;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-number-elements {
+            width: 1024px;
+            max-width: 1024px;
+            min-width: 1024px;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-number-title {
+            margin: 0 10px 0 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-number-schema {
+            width: 50px;
+            max-width: 50px;
+            height: 50px;
+            max-height: 50px;
+            background-color: black;
+            padding: 4px;
+            gap: 4px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .page-number-block {
+            background-color: #e16144;
+            flex-basis: 0;
+            flex-grow: 1;
+            min-width: 20px;
+        }
+
+        .page-number-block.selected {
+            background-color: black;
+        }
+
+        .schema-container {
+            width: 100%;
+            margin: 0 0 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .block-container {
+            min-height: 120px;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            max-width: 1024px;
+            min-width: 1024px;
+        }
+
+        .block_0_schema,
+        .block_1_schema,
+        .block_2_schema,
+        .block_3_schema,
+        .block_4_schema {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+        }
+
+        .block_0_schema:after,
+        .block_1_schema:after,
+        .block_2_schema:after,
+        .block_3_schema:after,
+        .block_4_schema:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .block_0_schema:after {
+            width: 32px;
+            height: 32px;
+            border: solid 4px #eee;
+            box-sizing: border-box;
+        }
+
+        .block_1_schema:after {
+            width: 32px;
+            height: 32px;
+            border: solid 4px #888;
+            border-bottom: none;
+            border-right: none;
+            box-sizing: border-box;
+        }
+
+        .block_2_schema:after {
+            width: 32px;
+            height: 32px;
+            background-color: #aaa;
+        }
+
+        .block_3_schema:after {
+            border-top: 32px solid #555;
+            border-right: 32px solid transparent;
+        }
+
+        .block_4_schema:after {
+            width: 32px;
+            height: 32px;
+            background-color: #333;
+        }
+
+        .schema {
+            /* border: #efefef 1px solid; */
+        }
+
+        .schema.schema_32_32 {
+            display: grid;
+            grid-template-columns: repeat(34, 1fr);
+            gap: 2px;
+            justify-items: center;
+        }
+
+        .schema.schema_24_24 {
+            display: grid;
+            grid-template-columns: repeat(26, 1fr);
+            gap: 2px;
+            justify-items: center;
+        }
+
+        .line_number {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            font-weight: 600;
+        }
+
+        .block_0,
+        .block_1,
+        .block_2,
+        .block_3,
+        .block_4 {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            font-size: 8px;
+            font-weight: 600;
+            padding: 1px 2px;
+            box-sizing: border-box;
+            color: #333;
+            position: relative;            
+        }
+
+        .block_0 span,
+        .block_1 span,
+        .block_2 span,
+        .block_3 span,
+        .block_4 span {
+            z-index: 100;
+        }
+
+        .block_4 span {
+            color: #eee;
+        }
+
+        .block_0:after,
+        .block_1:after,
+        .block_2:after,
+        .block_3:after,
+        .block_4:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 99;
+        }
+
+        .block_0:after {
+            width: 20px;
+            height: 20px;
+            border: solid 3px #eee;
+            box-sizing: border-box;
+        }
+
+        .block_1:after {
+            width: 20px;
+            height: 20px;
+            border: solid 4px #888;
+            border-bottom: none;
+            border-right: none;
+            box-sizing: border-box;
+        }
+
+        .block_2:after {
+
+            width: 20px;
+            height: 20px;
+            background-color: #aaa;
+        }
+
+        .block_3:after {
+            border-top: 20px solid #555;
+            border-right: 20px solid transparent;
+        }
+
+        .block_4:after {
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+        }
+    </style>
+    <div class="container">
+
+        <div class="page-number-container">
+            <div class="page-number-elements">
+                <div class="page-number-title">{{page_number}}</div>
+                <div class="page-number-schema">
+                    {{page_number_schema}}
+                </div>
+            </div>
+        </div>
+
+        <div class="block-container">
+            <div class="block_0_schema"></div>
+            <div class="block_1_schema"></div>
+            <div class="block_2_schema"></div>
+            <div class="block_3_schema"></div>
+            <div class="block_4_schema"></div>
+        </div>
+
+        <div class="schema-container">
+            <div class="schema {{schema-size-class}}">
+                {{schema-data}}
+            </div>
+        </div>
+
+
+    </div>
+</body>

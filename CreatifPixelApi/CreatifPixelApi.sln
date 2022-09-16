@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreatifPixelApi", "CreatifPixelApi\CreatifPixelApi.csproj", "{A265FADC-4811-408E-87BA-A2B9C35181D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatifPixelLib", "CreatifPixelLib\CreatifPixelLib.csproj", "{927E9EC7-10DD-411A-A97D-AFB403AB7A2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A265FADC-4811-408E-87BA-A2B9C35181D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A265FADC-4811-408E-87BA-A2B9C35181D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A265FADC-4811-408E-87BA-A2B9C35181D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A265FADC-4811-408E-87BA-A2B9C35181D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{927E9EC7-10DD-411A-A97D-AFB403AB7A2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{927E9EC7-10DD-411A-A97D-AFB403AB7A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{927E9EC7-10DD-411A-A97D-AFB403AB7A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{927E9EC7-10DD-411A-A97D-AFB403AB7A2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {19684FEE-0C45-4505-9958-AB68EF1286B3}
+	EndGlobalSection
+EndGlobal
