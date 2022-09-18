@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Schema</title>
+</head>
+
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Assistant&display=swap');
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: white;
+        }
+
+        .container {
+            width: 100%;
+            font-family: Assistant;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page-number-container {
+            width: 100%;
+            height: 120px;
+            min-height: 120px;
+            background-color: #e16144;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .page-number-title {
+            font-family: Assistant;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-number-schema {
+            margin-left: 30px;
+            width: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page-number-schema table {
+            /* width: 60px;
+            max-width: 60px;
+            height: 60px;
+            max-height: 60px; */
+            background-color: #333;
+        }
+
+        .page-number-schema table td {
+            padding: 1px;
+        }
+
+        .page-number-block {
+            background-color: white;
+            width: 30px;
+            min-width: 30px;
+            height: 30px;
+            min-height: 30px;
+        }
+
+        .page-number-block.selected {
+            background-color: black;
+        }
+
+        .schema-container {
+            width: 100%;
+            margin: 0 0 40px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .schema {
+            /* border: #efefef 1px solid; */
+        }
+
+        .schema.schema_32_32 {
+            display: grid;
+            grid-template-columns: repeat(34, 1fr);
+            gap: 2px;
+            justify-items: center;
+        }
+
+        .schema.schema_24_24 {
+            display: grid;
+            grid-template-columns: repeat(26, 1fr);
+            gap: 2px;
+            justify-items: center;
+        }
+
+        .line_number {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            font-weight: 600;
+        }
+
+        .block_0,
+        .block_1,
+        .block_2,
+        .block_3,
+        .block_4 {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            font-size: 8px;
+            font-weight: 600;
+            padding: 1px 2px;
+            box-sizing: border-box;
+            color: #333;
+            position: relative;
+        }
+
+        .block_0 span,
+        .block_1 span,
+        .block_2 span,
+        .block_3 span,
+        .block_4 span {
+            z-index: 100;
+        }
+
+        .block_4 span {
+            color: #eee;
+        }
+
+        .block_0:after,
+        .block_1:after,
+        .block_2:after,
+        .block_3:after,
+        .block_4:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 99;
+        }
+
+        .block_0:after {
+            width: 20px;
+            height: 20px;
+            border: solid 3px #eee;
+            box-sizing: border-box;
+        }
+
+        .block_1:after {
+            width: 20px;
+            height: 20px;
+            border: solid 4px #888;
+            border-bottom: none;
+            border-right: none;
+            box-sizing: border-box;
+        }
+
+        .block_2:after {
+
+            width: 20px;
+            height: 20px;
+            background-color: #aaa;
+        }
+
+        .block_3:after {
+            border-top: 20px solid #555;
+            border-right: 20px solid transparent;
+        }
+
+        .block_4:after {
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+        }
+    </style>
+    <div class="container">
+
+        <div class="page-number-container">
+            <div class="page-number-schema">
+                <div class="page-number-title">{{page_number}}</div>
+                <table border="0">
+                    {{page_number_schema}}
+                </table>
+            </div>
+        </div>
+        <!-- 
+        <div class="schema-container">
+            <div class="schema {{schema-size-class}}">
+                {{schema-data}}
+            </div>
+        </div> -->
+
+
+    </div>
+</body>

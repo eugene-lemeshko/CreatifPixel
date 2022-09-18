@@ -35,12 +35,14 @@ namespace CreatifPixelLib.Implementations
 
         public byte[] BuildPdfScheme(int[,] pixels, string nameSuffix)
         {
-            var titleBody = BuildTitle(pixels, nameSuffix, false);
+            //var htmlBody = BuildTitle(pixels, nameSuffix, _options.SaveSchemaImage);
+
+            var htmlBodies = BuildSchema(pixels, nameSuffix, _options.SaveSchemaImage);
 
             var converter = new HtmlToPdf();
             converter.Options.MaxPageLoadTime = 120;
 
-            var doc = converter.ConvertHtmlString(titleBody);
+            var doc = converter.ConvertHtmlString(htmlBodies[0]);
 
             byte[] bytes;
             using var mStream = new MemoryStream();
@@ -59,31 +61,39 @@ namespace CreatifPixelLib.Implementations
 
         protected string BuildTitle(int[,] pixels, string name, bool createFile)
         {
-            var templateBody = File.ReadAllText(_options.SchemaTemplateFolder + "\\template_title.html");
-            var outputDir = CreateOutputDir(name);
-            var resultSchema = $"{outputDir}\\title_schema_{name}.html";
+            var templateBody = File.ReadAllText(_options.SchemaTemplateFolder + "\\template_title2.html");
 
             var schemaString = new StringBuilder();
             var pixelsByColor = new int[] { 0, 0, 0, 0, 0 };
+            var xCenter = pixels.GetLength(0) / 2;
+            var yCenter = pixels.GetLength(1) / 2;
             for (var y = 0; y < pixels.GetLength(1); y++)
             {
+                schemaString.Append("<tr>");
+                var ySeparator = (y + 1) == yCenter ? "y_separator" : "";
                 for (var x = 0; x < pixels.GetLength(0); x++)
                 {
                     var pixelWeight = pixels[x, y];
-                    var itemString = $"<div class=\"brick_{4 - pixelWeight}\"></div>";
+                    var xSeparator = (x + 1) == xCenter ? "x_separator" : "";
+                    var itemString = $"<td class=\"{xSeparator} {ySeparator}\"><div class=\"brick_{4 - pixelWeight}\"></div></td>";
                     schemaString.Append(itemString);
                     pixelsByColor[4 - pixelWeight] = pixelsByColor[4 - pixelWeight] + 1;
                 }
+                schemaString.Append("</tr>");
             }
 
-            // TEMP
-            var schemaBody = templateBody;
-            //var schemaBody = templateBody.Replace("{{schema-size-class}}", $"schema_{pixels.GetLength(0).ToString()}_{pixels.GetLength(1).ToString()}");
-            //schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
+            //
+            var schemaBody = templateBody.Replace("{{schema-size-class}}", $"schema_{pixels.GetLength(0).ToString()}_{pixels.GetLength(1).ToString()}");
+            schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
             //for (var i = 0; i < pixelsByColor.Length; i++)
             //    schemaBody = schemaBody.Replace($"{{{{brick_amount_{i.ToString()}}}}}", pixelsByColor[i].ToString());
 
-            if (createFile) File.WriteAllText(resultSchema, schemaBody, Encoding.UTF8);
+            if (createFile)
+            {
+                var outputDir = CreateOutputDir(name);
+                var resultSchema = $"{outputDir}\\title_schema_{name}.html";
+                File.WriteAllText(resultSchema, schemaBody, Encoding.UTF8);
+            }
 
             return schemaBody;
         }
@@ -100,17 +110,18 @@ namespace CreatifPixelLib.Implementations
             return (zipFileName, $"{name}.zip");
         }
 
-        protected void BuildSchema(int[,] pixels, string nameSuffix, bool createFile)
+        protected string[] BuildSchema(int[,] pixels, string nameSuffix, bool createFile)
         {
-            var templateBody = File.ReadAllText(_options.SchemaTemplateFolder + "\\template.html");
-            var outputDir = CreateOutputDir(nameSuffix);
+            var templateBody = File.ReadAllText(_options.SchemaTemplateFolder + "\\template2.html");
+            var results = new string[4];
+            var idx = 0;
 
             for (var pageY = 0; pageY < RowsNumber; pageY++)
             {
                 for (var pageX = 0; pageX < ColumnsNumber; pageX++)
                 {
                     var pageNumber = (pageY * ColumnsNumber) + (pageX + 1);
-                    var resultSchema = $"{outputDir}\\schema_{nameSuffix}_{pageNumber.ToString()}.html";
+
                     var lengthX = pixels.GetLength(0) / ColumnsNumber;
                     var lengthY = pixels.GetLength(1) / RowsNumber;
 
@@ -118,54 +129,76 @@ namespace CreatifPixelLib.Implementations
 
                     // page-number
                     schemaBody = schemaBody.Replace("{{page_number}}", $"{pageNumber.ToString()}/{(RowsNumber * ColumnsNumber).ToString()}");
+
                     var pageNumberSchema = "";
-                    for (int pns = 0; pns < (ColumnsNumber * RowsNumber); pns++)
+                    for (int pnsY = 0; pnsY < RowsNumber; pnsY++)
                     {
-                        var selected = ((pageNumber - 1) == pns) ? "" : "selected";
-                        pageNumberSchema += $"<div class=\"page-number-block {selected}\"></div>";
+                        pageNumberSchema += "<tr>";
+                        for (int pnsX = 0; pnsX < ColumnsNumber; pnsX++)
+                        {
+                            var pns = (pnsY * ColumnsNumber) + pnsX;
+                            var selected = ((pageNumber - 1) == pns) ? "selected" : "";
+                            pageNumberSchema += $"<td><div class=\"page-number-block {selected}\"></div></td>";
+                        }
+                        pageNumberSchema += "</tr>";
                     }
                     schemaBody = schemaBody.Replace("{{page_number_schema}}", pageNumberSchema);
 
+                    //for (int pns = 0; pns < (ColumnsNumber * RowsNumber); pns++)
+                    //{
+                    //    var selected = ((pageNumber - 1) == pns) ? "" : "selected";
+                    //    pageNumberSchema += $"<div class=\"page-number-block {selected}\"></div>";
+                    //}
+                    //schemaBody = schemaBody.Replace("{{page_number_schema}}", pageNumberSchema);
+
                     //page-schema
-                    var schemaString = new StringBuilder();
-                    for (var y = 0; y < lengthY; y++)
+                    //var schemaString = new StringBuilder();
+                    //for (var y = 0; y < lengthY; y++)
+                    //{
+                    //    var currentWeight = -1;
+                    //    var weightCount = 0;
+
+                    //    if (y == 0) schemaString.Append(BuildEmptyYLineNumber(lengthX));
+
+                    //    for (var x = 0; x < lengthX; x++)
+                    //    {
+                    //        var coordX = (pageX * lengthX) + x;
+                    //        var coordY = (pageY * lengthY) + y;
+                    //        var pixelWeight = pixels[coordX, coordY];
+
+                    //        if (pixelWeight != currentWeight)
+                    //        {
+                    //            currentWeight = pixelWeight;
+                    //            weightCount = 1;
+                    //        }
+                    //        else 
+                    //        {
+                    //            weightCount++;
+                    //        }
+
+                    //        if (x == 0) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
+
+                    //        schemaString.Append($"<div class=\"block_{4 - pixelWeight}\"><span>{weightCount.ToString()}</span></div>");
+
+                    //        if (x == (lengthX - 1)) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
+                    //    }
+
+                    //    if (y == (lengthY - 1)) schemaString.Append(BuildEmptyYLineNumber(lengthX));
+                    //}
+
+                    //schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
+                    results[idx++] = schemaBody;
+
+                    if (createFile)
                     {
-                        var currentWeight = -1;
-                        var weightCount = 0;
-
-                        if (y == 0) schemaString.Append(BuildEmptyYLineNumber(lengthX));
-
-                        for (var x = 0; x < lengthX; x++)
-                        {
-                            var coordX = (pageX * lengthX) + x;
-                            var coordY = (pageY * lengthY) + y;
-                            var pixelWeight = pixels[coordX, coordY];
-
-                            if (pixelWeight != currentWeight)
-                            {
-                                currentWeight = pixelWeight;
-                                weightCount = 1;
-                            }
-                            else 
-                            {
-                                weightCount++;
-                            }
-
-                            if (x == 0) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
-
-                            schemaString.Append($"<div class=\"block_{4 - pixelWeight}\"><span>{weightCount.ToString()}</span></div>");
-
-                            if (x == (lengthX - 1)) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
-                        }
-
-                        if (y == (lengthY - 1)) schemaString.Append(BuildEmptyYLineNumber(lengthX));
+                        var outputDir = CreateOutputDir(nameSuffix);
+                        var resultSchema = $"{outputDir}\\schema_{nameSuffix}_{pageNumber.ToString()}.html";
+                        File.WriteAllText(resultSchema, schemaBody, Encoding.UTF8);
                     }
-
-                    schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
-
-                    if (createFile) File.WriteAllText(resultSchema, schemaBody, Encoding.UTF8);
                 }
             }
+
+            return results;
         }
 
         protected string BuildEmptyYLineNumber(int lenghtX) 
