@@ -31,11 +31,13 @@ namespace CreatifPixelApi.Controllers
         }
 
         [HttpPost("get-preview")]
-        public BrickImagePreview GetPreview([FromBody] BrickImage model)
+        public ActionResult<BrickImagePreview> GetPreview([FromBody] BrickImage model)
         {
             if (model == null || model.Base64DataString == null) return null;
 
             var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, model.Size, -1, model.Contrast, false);
+
+            if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
             return new BrickImagePreview
             {
@@ -51,7 +53,7 @@ namespace CreatifPixelApi.Controllers
 
             var license = _licenseService.GetLicenseByKey(model.LicenseKey);
 
-            if (license == null) return BadRequest();
+            if (license == null) return BadRequest("NO_LICENSE_CODE");
 
             //
             //var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.BuildByIndex, model.Contrast, false);
@@ -80,9 +82,11 @@ namespace CreatifPixelApi.Controllers
 
             var license = _licenseService.GetLicenseByKey(model.LicenseKey);
 
-            if (license == null) return BadRequest();
+            if (license == null) return BadRequest("NO_LICENSE_CODE");
 
             var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.BuildByIndex, model.Contrast, false);
+
+            if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
             var bytes = _docProcessor.BuildPdfScheme(newImages.pixelizedImageSets[0].Pixels, newImages.name);
 
@@ -108,7 +112,5 @@ namespace CreatifPixelApi.Controllers
         {
             public string Name { get; set; }
         }
-
-
     }
 }

@@ -36,11 +36,13 @@ namespace CreatifPixelLib.Implementations
             _options = options.Value;
         }
 
-        public (List<PixelizedImageSet> pixelizedImageSets, string name) BuildNewImage(string imageBase64, PixelizedImageSizes size, int buildByIndex, int contrast, bool saveSchemaImage = false)
+        public (List<PixelizedImageSet>? pixelizedImageSets, string? name, string? errorCode) BuildNewImage(string imageBase64, PixelizedImageSizes size, int buildByIndex, int contrast, bool saveSchemaImage = false)
         {
-            if (imageBase64 == null) return (null, null);
+            if (imageBase64 == null) return (null, null, "NO_IMAGE_BODY");
 
             using var image = Utils.GetBitmapFromBase64(imageBase64);
+
+            if (image.Width != image.Height) return (null, null, "WRONG_IMAGE_SIZE");
 
             _logger.LogInformation("Image Width/Height: {Width}/{Height}", image.Width, image.Height);
 
@@ -66,7 +68,7 @@ namespace CreatifPixelLib.Implementations
                 catch { }
             }
 
-            return (pixelizedImages.pixelizedImageSets, g);
+            return (pixelizedImages.pixelizedImageSets, g, null);
         }
 
         protected (Bitmap image, List<PixelizedImageSet> pixelizedImageSets) BuildPixelizedImage(Bitmap image, PixelizedImageSizes size, int buildByIndex, int contrast = 0)

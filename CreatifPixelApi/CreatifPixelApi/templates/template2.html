@@ -55,7 +55,7 @@
             max-width: 60px;
             height: 60px;
             max-height: 60px; */
-            background-color: #333;
+            background-color: #444;
         }
 
         .page-number-schema table td {
@@ -71,42 +71,44 @@
         }
 
         .page-number-block.selected {
-            background-color: black;
+            background-color: #222;
         }
 
         .schema-container {
             width: 100%;
-            margin: 0 0 40px 0;
+            margin: 40px 0;
             display: flex;
             justify-content: center;
         }
 
         .schema {
-            /* border: #efefef 1px solid; */
+            margin: auto;
+        }
+
+        .schema table {
+            border-spacing: 0;
+        }
+
+        .schema td {
+            padding: 3px;
         }
 
         .schema.schema_32_32 {
-            display: grid;
-            grid-template-columns: repeat(34, 1fr);
-            gap: 2px;
-            justify-items: center;
+
         }
 
         .schema.schema_24_24 {
-            display: grid;
-            grid-template-columns: repeat(26, 1fr);
-            gap: 2px;
-            justify-items: center;
+
         }
 
         .line_number {
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 8px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 400;
         }
 
         .block_0,
@@ -114,13 +116,13 @@
         .block_2,
         .block_3,
         .block_4 {
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             display: flex;
             justify-content: flex-end;
             align-items: flex-end;
-            font-size: 8px;
-            font-weight: 600;
+            font-size: 9px;
+            font-weight: 400;
             padding: 1px 2px;
             box-sizing: border-box;
             color: #333;
@@ -152,15 +154,15 @@
         }
 
         .block_0:after {
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             border: solid 3px #eee;
             box-sizing: border-box;
         }
 
         .block_1:after {
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             border: solid 4px #888;
             border-bottom: none;
             border-right: none;
@@ -168,20 +170,19 @@
         }
 
         .block_2:after {
-
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             background-color: #aaa;
         }
 
         .block_3:after {
-            border-top: 20px solid #555;
-            border-right: 20px solid transparent;
+            border-top: 25px solid #555;
+            border-right: 25px solid transparent;
         }
 
         .block_4:after {
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             background-color: #333;
         }
     </style>
@@ -195,13 +196,14 @@
                 </table>
             </div>
         </div>
-        <!-- 
+
         <div class="schema-container">
             <div class="schema {{schema-size-class}}">
-                {{schema-data}}
+                <table border="0">
+                    {{schema-data}}
+                </table>
             </div>
-        </div> -->
-
+        </div>
 
     </div>
 </body>

@@ -35,25 +35,30 @@ namespace CreatifPixelLib.Implementations
 
         public byte[] BuildPdfScheme(int[,] pixels, string nameSuffix)
         {
-            //var htmlBody = BuildTitle(pixels, nameSuffix, _options.SaveSchemaImage);
+            var htmlTitle = BuildTitle(pixels, nameSuffix, _options.SaveSchemaImage);
 
             var htmlBodies = BuildSchema(pixels, nameSuffix, _options.SaveSchemaImage);
 
             var converter = new HtmlToPdf();
             converter.Options.MaxPageLoadTime = 120;
 
-            var doc = converter.ConvertHtmlString(htmlBodies[0]);
+            var pdfDoc = converter.ConvertHtmlString(htmlTitle);
+            for (int i = 0; i < htmlBodies.Length; i++)
+            {
+                var page = converter.ConvertHtmlString(htmlBodies[i]);
+                pdfDoc.Append(page);
+            }
 
             byte[] bytes;
             using var mStream = new MemoryStream();
 
-            doc.Save(mStream);
+            pdfDoc.Save(mStream);
             mStream.Position = 0;
 
             bytes = new byte[mStream.Length];
             mStream.Read(bytes, 0, bytes.Length);
 
-            doc.Close();
+            pdfDoc.Close();
 
             return bytes;
         }
@@ -144,49 +149,44 @@ namespace CreatifPixelLib.Implementations
                     }
                     schemaBody = schemaBody.Replace("{{page_number_schema}}", pageNumberSchema);
 
-                    //for (int pns = 0; pns < (ColumnsNumber * RowsNumber); pns++)
-                    //{
-                    //    var selected = ((pageNumber - 1) == pns) ? "" : "selected";
-                    //    pageNumberSchema += $"<div class=\"page-number-block {selected}\"></div>";
-                    //}
-                    //schemaBody = schemaBody.Replace("{{page_number_schema}}", pageNumberSchema);
-
                     //page-schema
-                    //var schemaString = new StringBuilder();
-                    //for (var y = 0; y < lengthY; y++)
-                    //{
-                    //    var currentWeight = -1;
-                    //    var weightCount = 0;
+                    var schemaString = new StringBuilder();
+                    for (var y = 0; y < lengthY; y++)
+                    {
+                        var currentWeight = -1;
+                        var weightCount = 0;
 
-                    //    if (y == 0) schemaString.Append(BuildEmptyYLineNumber(lengthX));
+                        if (y == 0) schemaString.Append(BuildEmptyYLineNumber(lengthX));
 
-                    //    for (var x = 0; x < lengthX; x++)
-                    //    {
-                    //        var coordX = (pageX * lengthX) + x;
-                    //        var coordY = (pageY * lengthY) + y;
-                    //        var pixelWeight = pixels[coordX, coordY];
+                        schemaString.Append("<tr>");
+                        for (var x = 0; x < lengthX; x++)
+                        {
+                            var coordX = (pageX * lengthX) + x;
+                            var coordY = (pageY * lengthY) + y;
+                            var pixelWeight = pixels[coordX, coordY];
 
-                    //        if (pixelWeight != currentWeight)
-                    //        {
-                    //            currentWeight = pixelWeight;
-                    //            weightCount = 1;
-                    //        }
-                    //        else 
-                    //        {
-                    //            weightCount++;
-                    //        }
+                            if (pixelWeight != currentWeight)
+                            {
+                                currentWeight = pixelWeight;
+                                weightCount = 1;
+                            }
+                            else
+                            {
+                                weightCount++;
+                            }
 
-                    //        if (x == 0) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
+                            if (x == 0) schemaString.Append($"<td><div class=\"line_number\">{(y + 1).ToString()}</div></td>");
 
-                    //        schemaString.Append($"<div class=\"block_{4 - pixelWeight}\"><span>{weightCount.ToString()}</span></div>");
+                            schemaString.Append($"<td><div class=\"block_{4 - pixelWeight}\"><span>{weightCount.ToString()}</span></div></td>");
 
-                    //        if (x == (lengthX - 1)) schemaString.Append($"<div class=\"line_number\">{(y + 1).ToString()}</div>");
-                    //    }
+                            if (x == (lengthX - 1)) schemaString.Append($"<td><div class=\"line_number\">{(y + 1).ToString()}</div></td>");
+                        }
+                        schemaString.Append("</tr>");
 
-                    //    if (y == (lengthY - 1)) schemaString.Append(BuildEmptyYLineNumber(lengthX));
-                    //}
+                        if (y == (lengthY - 1)) schemaString.Append(BuildEmptyYLineNumber(lengthX));
+                    }
 
-                    //schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
+                    schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
                     results[idx++] = schemaBody;
 
                     if (createFile)
@@ -204,12 +204,14 @@ namespace CreatifPixelLib.Implementations
         protected string BuildEmptyYLineNumber(int lenghtX) 
         {
             var line = new StringBuilder();
+            line.Append("<tr>");
             for (int x = 0; x < lenghtX; x++)
             {
-                if (x == 0) line.Append($"<div class=\"line_number\"></div>");
-                line.Append($"<div class=\"line_number\">{(x + 1).ToString()}</div>");
-                if (x == (lenghtX - 1)) line.Append($"<div class=\"line_number\"></div>");
+                if (x == 0) line.Append($"<td><div class=\"line_number\"></div></td>");
+                line.Append($"<td><div class=\"line_number\">{(x + 1).ToString()}</div></td>");
+                if (x == (lenghtX - 1)) line.Append($"<td><div class=\"line_number\"></div></td>");
             }
+            line.Append("</tr>");
             return line.ToString();
         }
 
