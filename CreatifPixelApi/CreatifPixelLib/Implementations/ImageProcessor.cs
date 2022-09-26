@@ -36,7 +36,7 @@ namespace CreatifPixelLib.Implementations
             _options = options.Value;
         }
 
-        public (List<PixelizedImageSet>? pixelizedImageSets, string? name, string? errorCode) BuildNewImage(string imageBase64, PixelizedImageSizes size, int buildByIndex, int contrast, bool saveSchemaImage = false)
+        public (List<PixelizedImageSet>? pixelizedImageSets, string? name, string? errorCode) BuildNewImage(string imageBase64, PixelizedImageSizes size, int contrast, int buildByIndex, bool saveSchemaImage)
         {
             if (imageBase64 == null) return (null, null, "NO_IMAGE_BODY");
 
@@ -46,7 +46,7 @@ namespace CreatifPixelLib.Implementations
 
             _logger.LogInformation("Image Width/Height: {Width}/{Height}", image.Width, image.Height);
 
-            var pixelizedImages = BuildPixelizedImage(image, size, buildByIndex, contrast);
+            var pixelizedImages = BuildPixelizedImage(image, size, contrast, buildByIndex);
 
             DrawSchemaImage(pixelizedImages.pixelizedImageSets, BrickSizes.Small, false);
 
@@ -71,7 +71,7 @@ namespace CreatifPixelLib.Implementations
             return (pixelizedImages.pixelizedImageSets, g, null);
         }
 
-        protected (Bitmap image, List<PixelizedImageSet> pixelizedImageSets) BuildPixelizedImage(Bitmap image, PixelizedImageSizes size, int buildByIndex, int contrast = 0)
+        protected (Bitmap image, List<PixelizedImageSet> pixelizedImageSets) BuildPixelizedImage(Bitmap image, PixelizedImageSizes size, int contrast, int buildByIndex)
         {
             int imageSize, blockSize;
             if (size == PixelizedImageSizes.Small) {

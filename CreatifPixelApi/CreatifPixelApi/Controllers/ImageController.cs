@@ -35,7 +35,7 @@ namespace CreatifPixelApi.Controllers
         {
             if (model == null || model.Base64DataString == null) return null;
 
-            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, model.Size, -1, model.Contrast, false);
+            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, model.Size, model.Contrast, - 1, false);
 
             if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
@@ -84,7 +84,7 @@ namespace CreatifPixelApi.Controllers
 
             if (license == null) return BadRequest("NO_LICENSE_CODE");
 
-            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.BuildByIndex, model.Contrast, false);
+            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.Contrast, model.BuildByIndex, false);
 
             if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
