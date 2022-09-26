@@ -81,5 +81,11 @@ Payload:
 Response:
  File/Blob object.
  
+ ## 4. Errors.
+  Status Code: 400 Bad Request. Returns in response as string.
+  - NO_IMAGE_BODY: image body is empty
+  - WRONG_IMAGE_SIZE: image width isn't equal image height
+  - NO_LICENSE_CODE: license code isn't presented or incorrect
+  
  EXAMPLE:
  https://github.com/eugene-lemeshko/ImageBrickProto/tree/main/image-brick-proto
