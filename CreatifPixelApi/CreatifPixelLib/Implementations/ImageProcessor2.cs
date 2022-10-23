@@ -13,7 +13,7 @@ using System.Text;
 
 namespace CreatifPixelLib.Implementations
 {
-    public class ImageProcessor : IImageProcessor
+    public class ImageProcessor2 : IImageProcessor
     {
         private readonly ILogger<ImageProcessor> _logger;
         private readonly ImageTransformConfig _options;
@@ -26,7 +26,7 @@ namespace CreatifPixelLib.Implementations
             new float[] {0, 0, 0, 0, 1}
         });
 
-        public ImageProcessor(ILogger<ImageProcessor> logger,
+        public ImageProcessor2(ILogger<ImageProcessor> logger,
             IOptions<ImageTransformConfig> options) 
         {
             _logger = logger;
@@ -38,8 +38,6 @@ namespace CreatifPixelLib.Implementations
             if (imageBase64 == null) return (null, null, "NO_IMAGE_BODY");
 
             using var image = Utils.GetBitmapFromBase64(imageBase64);
-
-            if (image.Width != image.Height) return (null, null, "WRONG_IMAGE_SIZE");
 
             _logger.LogInformation("Image Width/Height: {Width}/{Height}", image.Width, image.Height);
 
@@ -70,37 +68,32 @@ namespace CreatifPixelLib.Implementations
 
         protected (Bitmap image, List<PixelizedImageSet> pixelizedImageSets) BuildPixelizedImage(Bitmap image, PixelizedImageSizes size, int contrast, int buildByIndex)
         {
-            int imageSize, blockSize;
+            int imageSize, blockSize = 1;
             if (size == PixelizedImageSizes.Small) {
-                imageSize = _options.SmallSizeCanvas * _options.SmallSizeBlocks;
-                blockSize = _options.SmallSizeBlocks;
+                imageSize = _options.SmallSizeCanvas;
             }
             else if (size == PixelizedImageSizes.Medium)
             {
-                imageSize = _options.MediumSizeBlocks * _options.MediumSizeCanvas;
-                blockSize = _options.MediumSizeBlocks;
+                imageSize = _options.MediumSizeCanvas;
             }
             else
-                throw new ArgumentException("PixelizedImageSizes is incorrect");
+                throw new ArgumentException("Size is incorrect");
 
-            int width, height;
-            if (image.Width > image.Height)
+            int width = imageSize, height = imageSize;
+
+            if (image.Width != image.Height)
             {
-                width = imageSize;
-                height = Convert.ToInt32(image.Height * imageSize / (double)image.Width);
-            }
-            else
-            {
-                width = Convert.ToInt32(image.Width * imageSize / (double)image.Height);
-                height = imageSize;
+                var min = Math.Min(image.Width, image.Height);
+                _logger.LogWarning("Image has different dimensions. Min: {min}", min);
             }
 
             using var imageOriginal = new Bitmap(width, height);
             using var graphics = Graphics.FromImage(imageOriginal);
 
-            graphics.CompositingQuality = CompositingQuality.HighSpeed;
-            graphics.InterpolationMode = InterpolationMode.Low;
-            graphics.CompositingMode = CompositingMode.SourceCopy;
+            graphics.CompositingQuality = CompositingQuality.HighQuality;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.CompositingMode = CompositingMode.SourceOver;
+            graphics.SmoothingMode = SmoothingMode.None;
             graphics.DrawImage(image, 0, 0, width, height);
 
             // 

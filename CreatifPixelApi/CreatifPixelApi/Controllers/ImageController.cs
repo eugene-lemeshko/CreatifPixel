@@ -35,7 +35,7 @@ namespace CreatifPixelApi.Controllers
         {
             if (model == null || model.Base64DataString == null) return null;
 
-            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, model.Size, model.Contrast, - 1, false);
+            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, PixelizedImageSizes.Medium, model.Contrast, - 1, false);
 
             if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
@@ -47,35 +47,6 @@ namespace CreatifPixelApi.Controllers
         }
 
         [HttpPost("get-schema")]
-        public ActionResult GetSchema([FromBody] BrickImage model)
-        {
-            if (model == null || model.Base64DataString == null) return BadRequest();
-
-            var license = _licenseService.GetLicenseByKey(model.LicenseKey);
-
-            if (license == null) return BadRequest("NO_LICENSE_CODE");
-
-            //
-            //var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.BuildByIndex, model.Contrast, false);
-
-            //var bytes = _docProcessor.BuildPdfScheme(newImages.pixelizedImageSets[0].Pixels, newImages.name);
-            //
-
-            // FAKE PDF
-            var fakePDFFileName = $"{_options.SchemaTemplateFolder}\\fake_schema.pdf";
-
-            byte[] bytes;
-            using (var fsSource = new FileStream(fakePDFFileName, FileMode.Open, FileAccess.Read))
-            {
-                bytes = new byte[fsSource.Length];
-                fsSource.Read(bytes, 0, bytes.Length);
-            }
-            //
-
-            return File(bytes, "application/octet-stream", "schema.pdf");
-        }
-
-        [HttpPost("get-schema2")]
         public ActionResult GetSchema2([FromBody] BrickImage model)
         {
             if (model == null || model.Base64DataString == null) return BadRequest();
@@ -84,7 +55,7 @@ namespace CreatifPixelApi.Controllers
 
             if (license == null) return BadRequest("NO_LICENSE_CODE");
 
-            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.Contrast, model.BuildByIndex, false);
+            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, PixelizedImageSizes.Medium, model.Contrast, model.BuildByIndex, false);
 
             if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
@@ -92,6 +63,35 @@ namespace CreatifPixelApi.Controllers
 
             return File(bytes, "application/octet-stream", "schema.pdf");
         }
+
+        //[HttpPost("get-schema")]
+        //public ActionResult GetSchema([FromBody] BrickImage model)
+        //{
+        //    if (model == null || model.Base64DataString == null) return BadRequest();
+
+        //    var license = _licenseService.GetLicenseByKey(model.LicenseKey);
+
+        //    if (license == null) return BadRequest("NO_LICENSE_CODE");
+
+        //    //
+        //    //var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, license.Size, model.BuildByIndex, model.Contrast, false);
+
+        //    //var bytes = _docProcessor.BuildPdfScheme(newImages.pixelizedImageSets[0].Pixels, newImages.name);
+        //    //
+
+        //    // FAKE PDF
+        //    var fakePDFFileName = $"{_options.SchemaTemplateFolder}\\fake_schema.pdf";
+
+        //    byte[] bytes;
+        //    using (var fsSource = new FileStream(fakePDFFileName, FileMode.Open, FileAccess.Read))
+        //    {
+        //        bytes = new byte[fsSource.Length];
+        //        fsSource.Read(bytes, 0, bytes.Length);
+        //    }
+        //    //
+
+        //    return File(bytes, "application/octet-stream", "schema.pdf");
+        //}
 
         [HttpPost("clean-up")]
         public ActionResult CleanUp([FromBody] BrickImage model)

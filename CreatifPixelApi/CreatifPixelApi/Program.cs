@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ImageTransformConfig>(builder.Configuration.GetSection(ImageTransformConfig.Name));
 
-builder.Services.AddTransient<IImageProcessor, ImageProcessor>();
+builder.Services.AddTransient<IImageProcessor, ImageProcessor2>();
 builder.Services.AddTransient<IDocProcessor, DocProcessor>();
 builder.Services.AddTransient<ILicenseService, LicenseService>();
 

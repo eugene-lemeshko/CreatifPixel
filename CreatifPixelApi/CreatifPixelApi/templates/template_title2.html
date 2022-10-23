@@ -8,16 +8,16 @@
 
 <body>
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Assistant&display=swap');
+        /* @import url('https://fonts.googleapis.com/css?family=Assistant&display=swap'); */
 
-       body {
+        body {
             padding: 0;
             margin: 0;
             background-color: white;
         }
 
         .container {
-            font-family: Assistant;
+            font-family: Tahoma;
             color: #333;
             width: 100%;
             display: flex;
@@ -33,7 +33,7 @@
             align-items: center;
             justify-content: space-between;
             background-color: #e16144;
-        } 
+        }
 
         .logo {
             margin: 0 20px 0 50px;
@@ -63,14 +63,20 @@
             text-align: center;
         }
 
+        .brick-container {
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .schema-container {
-            width: 100%;
-            margin: 20px;
+            margin: 10px 10px 0 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;            
+            text-align: center;
         }
 
         .schema {
@@ -93,7 +99,7 @@
         .schema td.y_separator {
             border-bottom: #777 4px solid;
         }
-        
+
         .text_1 {
             font-size: 18px;
             font-weight: 600;
@@ -104,25 +110,28 @@
         }
 
         .text_2 {
-            margin: 20px 40px 0 40px;
-            font-size: 18px;
-            color: #222;
+            margin: 10px 40px 0 40px;
+            font-size: 16px;
+            font-weight: 400;
+            color: #444;
         }
 
         .text_2 .bold {
             font-weight: 600;
+            font-size: 18px;
+            color: #222;
         }
 
         .schema.schema_64_64,
         .text_1.schema_64_64 {
-            width: 1024px;
-            max-width: 1024px;
+            width: 772px;
+            max-width: 772px;
         }
 
         .schema.schema_48_48,
-        .text_1.schema_48_48  {
-            width: 768px;
-            max-width: 768px;
+        .text_1.schema_48_48 {
+            width: 580px;
+            max-width: 580px;
         }
 
         .brick_0,
@@ -130,8 +139,8 @@
         .brick_2,
         .brick_3,
         .brick_4 {
-            width: 16px;
-            height: 16px;
+            width: 12px;
+            height: 12px;
         }
 
         .brick_0 {
@@ -171,6 +180,18 @@
         .brick_4.big {
             width: 32px;
             height: 32px;
+        }
+
+        .brick_amount {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 30px;
+        }
+
+        .brick_amount_title {
+            font-size: 22px;
+            font-weight: 600;
         }
 
         .block_0_schema,
@@ -233,7 +254,6 @@
         table.bricks {
             border-spacing: 10px;
         }
-
     </style>
     <div class="container">
 
@@ -244,12 +264,36 @@
         </div>
 
         <div class="schema-container">
+
+            <div class="brick-container">
+                <div class="brick_amount">
+                    <div class="brick_0 big"></div>
+                    <div class="brick_amount_title">{{brick_amount_0}}</div>
+                </div>
+                <div class="brick_amount">
+                    <div class="brick_1 big"></div>
+                    <div class="brick_amount_title">{{brick_amount_1}}</div>
+                </div>
+                <div class="brick_amount">
+                    <div class="brick_2 big"></div>
+                    <div class="brick_amount_title">{{brick_amount_2}}</div>
+                </div>
+                <div class="brick_amount">
+                    <div class="brick_3 big"></div>
+                    <div class="brick_amount_title">{{brick_amount_3}}</div>
+                </div>
+                <div class="brick_amount">
+                    <div class="brick_4 big"></div>
+                    <div class="brick_amount_title">{{brick_amount_4}}</div>
+                </div>
+            </div>
+
             <div class="schema {{schema-size-class}}">
                 <table border="0">
                     {{schema-data}}
                 </table>
             </div>
-            
+
             <div class="text_1 {{schema-size-class}}">
                 Pour assembler votre mosaïque, vous n'aurez besoin que d'un peu d'enthousiasme et de quelques heures
                 pour vous amuser!
@@ -259,7 +303,8 @@
 
         <div class="text_2">
             <div class="bold">Comment assembler votre mosaïque</div>
-            <div>Chaque couleur est associée à un logo. Pour plus de commodité tous les paquets individuels avec des briques sont repérés avec des logos correspondants.</div>
+            <div>Chaque couleur est associée à un logo. Pour plus de commodité tous les paquets individuels avec des
+                briques sont repérés avec des logos correspondants.</div>
             <table border="0" class="bricks">
                 <tr>
                     <td>
@@ -297,13 +342,15 @@
                 </tr>
             </table>
             <div>
-                Les chiffres spécifiés dans les instructions indiquent combien de briques de la même couleur sont à positionner consécutivement en une rangée.
+                Les chiffres spécifiés dans les instructions indiquent combien de briques de la même couleur sont à
+                positionner consécutivement en une rangée.
             </div>
         </div>
 
         <div class="text_2">
             <div class="bold">Montage de votre mosaïque</div>
-            <div>Placez les plaques de base la face arrière vers le haut sur une surface plane et connectez-les à l'aide d'un fixateur spécial. Installez les fixations après l'assemblage.</div>
+            <div>Placez les plaques de base la face arrière vers le haut sur une surface plane et connectez-les à l'aide
+                d'un fixateur spécial. Installez les fixations après l'assemblage.</div>
         </div>
 
     </div>

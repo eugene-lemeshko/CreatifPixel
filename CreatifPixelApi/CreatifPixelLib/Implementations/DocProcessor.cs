@@ -41,6 +41,8 @@ namespace CreatifPixelLib.Implementations
 
             var converter = new HtmlToPdf();
             converter.Options.MaxPageLoadTime = 120;
+            converter.Options.MarginTop = 16;
+            converter.Options.MarginBottom = 16;
 
             var pdfDoc = converter.ConvertHtmlString(htmlTitle);
             for (int i = 0; i < htmlBodies.Length; i++)
@@ -90,8 +92,8 @@ namespace CreatifPixelLib.Implementations
             //
             var schemaBody = templateBody.Replace("{{schema-size-class}}", $"schema_{pixels.GetLength(0).ToString()}_{pixels.GetLength(1).ToString()}");
             schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
-            //for (var i = 0; i < pixelsByColor.Length; i++)
-            //    schemaBody = schemaBody.Replace($"{{{{brick_amount_{i.ToString()}}}}}", pixelsByColor[i].ToString());
+            for (var i = 0; i < pixelsByColor.Length; i++)
+                schemaBody = schemaBody.Replace($"{{{{brick_amount_{i.ToString()}}}}}", pixelsByColor[i].ToString());
 
             if (createFile)
             {
