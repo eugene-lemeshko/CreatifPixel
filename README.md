@@ -75,7 +75,7 @@ Payload:
 - base64DataString - base64 string with cropped to square body of image used in the previous request.
 - contrast is left for future support. Set to 0.
 - size: 0 - Small, 1 - Medium. Set to 1
-- licenseKey - The license key the user should input. Test key = "Small_151187"
+- licenseKey - The license key the user should input. Test key = "Medium_190979"
 - buildByIndex - Index of preview image from the previous request user selected. Starts from 0.
 
 Response:
