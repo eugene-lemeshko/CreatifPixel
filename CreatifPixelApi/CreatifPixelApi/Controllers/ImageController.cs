@@ -84,11 +84,15 @@ namespace CreatifPixelApi.Controllers
 
             if (license == null) return BadRequest("NO_LICENSE_CODE");
 
-            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, PixelizedImageSizes.Medium, model.Contrast, model.BuildByIndex, false);
+            if (license.Size == PixelizedImageSizes.Medium && model.ImageAsPixels.Length != (_options.MediumSizeCanvas * _options.MediumSizeCanvas))
+                return BadRequest("WRONG_PIXEL_IMAGE_SIZE");
 
-            if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
+            if (license.Size == PixelizedImageSizes.Small && model.ImageAsPixels.Length != (_options.SmallSizeCanvas * _options.SmallSizeCanvas))
+                return BadRequest("WRONG_PIXEL_IMAGE_SIZE");
 
-            var bytes = _docProcessor.BuildPdfScheme(newImages.pixelizedImageSets[0].Pixels, newImages.name);
+            var pixels = Utils.GetPixelsFromLine(model.ImageAsPixels, model.Size == PixelizedImageSizes.Medium ? _options.MediumSizeCanvas : _options.SmallSizeCanvas);
+
+            var bytes = _docProcessor.BuildPdfScheme(pixels, Guid.NewGuid().ToString("N"));
 
             return File(bytes, "application/octet-stream", "schema.pdf");
         }

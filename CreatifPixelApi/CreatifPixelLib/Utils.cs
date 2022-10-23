@@ -485,6 +485,15 @@ namespace CreatifPixelLib
             }
         }
 
+        public static int[,] GetPixelsFromLine(int[] line, int size)
+        {
+            var result = new int[size, size];
+            for (var y = 0; y < size; y++)
+                for (var x = 0; x < size; x++)
+                    result[x, y] = line[(y * size) + x];
+            return result;
+        }
+
         private static void UpdatePixelSetWithNewColor(PixelizedImageSet pixelizedImageSet, int toColorIdx, int fromColorIdx, int fromAmount)
         {
             var toColorIndexes = new List<ColorIdxCoord>();

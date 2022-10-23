@@ -13,7 +13,7 @@ namespace CreatifPixelLib.Implementations
         {
             if (string.IsNullOrWhiteSpace(licenseKey)) return null;
 
-            if (licenseKey == TEMP_SMALL_KEY) return new ImageBrickLicense { Expired = DateTime.MaxValue, Size = PixelizedImageSizes.Small };
+            if (licenseKey == TEMP_SMALL_KEY) return new ImageBrickLicense { Expired = DateTime.MaxValue, Size = PixelizedImageSizes.Medium };
             if (licenseKey == TEMP_MEDIUM_KEY) return new ImageBrickLicense { Expired = DateTime.MaxValue, Size = PixelizedImageSizes.Medium };
 
             return null;
