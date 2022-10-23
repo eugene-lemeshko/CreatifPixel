@@ -1,11 +1,13 @@
 ﻿using CreatifPixelLib.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Schema;
 
 namespace CreatifPixelLib
 {
@@ -419,5 +421,116 @@ namespace CreatifPixelLib
                 if (saveBitmap) pixelizedImageSet.Bitmap = bitmap;
             }
         }
+
+        public static int[] GetPixelAmountsByColor(int[,] pixels)
+        {
+            var pixelAmountsByColor = new int[] { 0, 0, 0, 0, 0 };
+            for (var y = 0; y < pixels.GetLength(1); y++)
+            {
+                for (var x = 0; x < pixels.GetLength(0); x++)
+                {
+                    var pixelWeight = pixels[x, y];
+                    pixelAmountsByColor[pixelWeight] = pixelAmountsByColor[pixelWeight] + 1;
+                }
+            }
+            return pixelAmountsByColor;
+        }
+
+        public static void CorrectPixelColorByAmount(PixelizedImageSet pixelizedImageSet, int maxAmount)
+        {
+            var colorByPixelDescriptors = new ColorByPixelDescriptor[5];
+            //
+            for (var x = 0; x < pixelizedImageSet.PixelAmountsByColor.Length; x++)
+            {
+                var amount = pixelizedImageSet.PixelAmountsByColor[x];
+                var colorByPixelDescriptor = new ColorByPixelDescriptor { Amount = amount, Index = x, FreeAmount = (maxAmount - amount) };
+                colorByPixelDescriptors[x] = colorByPixelDescriptor;
+            }
+
+            //
+            for (var currentIdx = 0; currentIdx < colorByPixelDescriptors.Length; currentIdx++)
+            {
+                var currentColorByPixelDescriptor = colorByPixelDescriptors[currentIdx];
+                if (currentColorByPixelDescriptor.FreeAmount < 0)
+                {
+                    currentColorByPixelDescriptor.NearestFreeIndexes = FindNearestFreeIndexes(currentIdx, colorByPixelDescriptors);
+                    for (var donorIdx = 0; donorIdx < currentColorByPixelDescriptor.NearestFreeIndexes.Length; donorIdx++)
+                    {
+                        var nearestFreeIndex = currentColorByPixelDescriptor.NearestFreeIndexes[donorIdx];
+                        var donorColorByPixelDescriptor = colorByPixelDescriptors[nearestFreeIndex];
+
+                        var donorAmountToGet = 0;
+                        var currentAmountAbs = Math.Abs(currentColorByPixelDescriptor.FreeAmount);
+
+                        if (donorColorByPixelDescriptor.FreeAmount < currentAmountAbs)
+                        {
+                            donorAmountToGet = donorColorByPixelDescriptor.FreeAmount;
+                            donorColorByPixelDescriptor.FreeAmount = 0;
+                            currentColorByPixelDescriptor.FreeAmount = currentColorByPixelDescriptor.FreeAmount + donorAmountToGet;
+                            // 
+                            UpdatePixelSetWithNewColor(pixelizedImageSet, currentIdx, nearestFreeIndex, donorAmountToGet);
+                        }
+                        else
+                        {
+                            donorAmountToGet = currentAmountAbs;
+                            donorColorByPixelDescriptor.FreeAmount = donorColorByPixelDescriptor.FreeAmount - donorAmountToGet;
+                            currentColorByPixelDescriptor.FreeAmount = 0;
+                            //
+                            UpdatePixelSetWithNewColor(pixelizedImageSet, currentIdx, nearestFreeIndex, donorAmountToGet);
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        private static void UpdatePixelSetWithNewColor(PixelizedImageSet pixelizedImageSet, int toColorIdx, int fromColorIdx, int fromAmount)
+        {
+            var toColorIndexes = new List<ColorIdxCoord>();
+            for (var y = 0; y < pixelizedImageSet.Pixels.GetLength(1); y++)
+                for (var x = 0; x < pixelizedImageSet.Pixels.GetLength(0); x++)
+                {
+                    var pixelColor = pixelizedImageSet.Pixels[x, y];
+                    if (pixelColor == toColorIdx) toColorIndexes.Add(new ColorIdxCoord { X = x, Y = y });
+                }
+
+            for (var randomIdx = 0; randomIdx < fromAmount; randomIdx++)
+            {
+                var randomCoordIdx = Random.Shared.Next(0, toColorIndexes.Count - 1);
+                var coordToSet = toColorIndexes[randomCoordIdx];
+                pixelizedImageSet.Pixels[coordToSet.X, coordToSet.Y] = fromColorIdx;
+                toColorIndexes.RemoveAt(randomCoordIdx);
+            }
+        }
+
+        private static int[] FindNearestFreeIndexes(int baseIndex, ColorByPixelDescriptor[] descriptors)
+        {
+            var result = new List<int>(4);
+            for (var delta = 1; delta < 5; delta++)
+            {
+                var plusPosition = baseIndex + delta;
+                var minusPosition = baseIndex - delta;
+
+                if (plusPosition < 5 && descriptors[plusPosition].FreeAmount > 0) result.Add(plusPosition);
+                if (minusPosition >= 0 && descriptors[minusPosition].FreeAmount > 0) result.Add(minusPosition);
+            }
+            return result.ToArray();
+        }
+    }
+
+    class ColorIdxCoord
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    class ColorByPixelDescriptor
+    {
+        public int Amount { get; set; }
+        public int FreeAmount { get; set; }
+        public int Index { get; set; }
+        public int[] NearestFreeIndexes { get; set; }
+
     }
 }

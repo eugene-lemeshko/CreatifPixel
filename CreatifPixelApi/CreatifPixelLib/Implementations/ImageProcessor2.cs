@@ -169,6 +169,9 @@ namespace CreatifPixelLib.Implementations
             foreach (var result in results)
             {
                 result.Pixels = Utils.SetPixelized(result.Pixels, blockSize, blockSize, _options);
+                result.PixelAmountsByColor = Utils.GetPixelAmountsByColor(result.Pixels);
+                Utils.CorrectPixelColorByAmount(result, size == PixelizedImageSizes.Small ? _options.SmallSizeBlocksAmount : _options.MediumSizeBlocksAmount);
+                result.PixelAmountsByColor = Utils.GetPixelAmountsByColor(result.Pixels);
             }
 
             return (null, results);

@@ -71,7 +71,7 @@ namespace CreatifPixelLib.Implementations
             var templateBody = File.ReadAllText(_options.SchemaTemplateFolder + "\\template_title2.html");
 
             var schemaString = new StringBuilder();
-            var pixelsByColor = new int[] { 0, 0, 0, 0, 0 };
+
             var xCenter = pixels.GetLength(0) / 2;
             var yCenter = pixels.GetLength(1) / 2;
             for (var y = 0; y < pixels.GetLength(1); y++)
@@ -84,16 +84,16 @@ namespace CreatifPixelLib.Implementations
                     var xSeparator = (x + 1) == xCenter ? "x_separator" : "";
                     var itemString = $"<td class=\"{xSeparator} {ySeparator}\"><div class=\"brick_{4 - pixelWeight}\"></div></td>";
                     schemaString.Append(itemString);
-                    pixelsByColor[4 - pixelWeight] = pixelsByColor[4 - pixelWeight] + 1;
                 }
                 schemaString.Append("</tr>");
             }
 
             //
             var schemaBody = templateBody.Replace("{{schema-size-class}}", $"schema_{pixels.GetLength(0).ToString()}_{pixels.GetLength(1).ToString()}");
+            var pixelAmountsByColor = Utils.GetPixelAmountsByColor(pixels);
             schemaBody = schemaBody.Replace("{{schema-data}}", schemaString.ToString());
-            for (var i = 0; i < pixelsByColor.Length; i++)
-                schemaBody = schemaBody.Replace($"{{{{brick_amount_{i.ToString()}}}}}", pixelsByColor[i].ToString());
+            for (var i = 0; i < pixelAmountsByColor.Length; i++)
+                schemaBody = schemaBody.Replace($"{{{{brick_amount_{i.ToString()}}}}}", pixelAmountsByColor[i].ToString());
 
             if (createFile)
             {

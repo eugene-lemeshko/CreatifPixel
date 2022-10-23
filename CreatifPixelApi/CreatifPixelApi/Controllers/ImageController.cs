@@ -1,9 +1,10 @@
-﻿using CreatifPixelLib.Interfaces;
+﻿using CreatifPixelLib;
+using CreatifPixelLib.Interfaces;
 using CreatifPixelLib.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Xml.Linq;
+using System.Linq;
 
 namespace CreatifPixelApi.Controllers
 {
@@ -39,9 +40,19 @@ namespace CreatifPixelApi.Controllers
 
             if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
 
+            var arrayDimensionSize = model.Size == PixelizedImageSizes.Medium ? _options.MediumSizeCanvas : _options.SmallSizeCanvas;
+
             return new BrickImagePreview
             {
-                Base64StringImages = newImages.pixelizedImageSets.Select(x => x.Base64ImageString).ToArray(),
+                Base64StringImages = (model.GetPreviews.HasValue && model.GetPreviews.Value) ? newImages.pixelizedImageSets.Select(x => x.Base64ImageString).ToArray() : null,
+                ImagesByPixels = (model.GetPixels.HasValue && model.GetPixels.Value) ? newImages.pixelizedImageSets.Select(p => 
+                {
+                    var pixels = new int[arrayDimensionSize * arrayDimensionSize];
+                    for (int y = 0; y < arrayDimensionSize; y++)
+                        for (int x = 0; x < arrayDimensionSize; x++)
+                            pixels[(y * arrayDimensionSize) + x] = p.Pixels[x, y];
+                   return pixels;
+                }).ToArray() : null,
                 Size = model.Size,
             };
         }
@@ -50,6 +61,24 @@ namespace CreatifPixelApi.Controllers
         public ActionResult GetSchema2([FromBody] BrickImage model)
         {
             if (model == null || model.Base64DataString == null) return BadRequest();
+
+            var license = _licenseService.GetLicenseByKey(model.LicenseKey);
+
+            if (license == null) return BadRequest("NO_LICENSE_CODE");
+
+            var newImages = _imageProcessor.BuildNewImage(model.Base64DataString, PixelizedImageSizes.Medium, model.Contrast, model.BuildByIndex, false);
+
+            if (!string.IsNullOrEmpty(newImages.errorCode)) return BadRequest(newImages.errorCode);
+
+            var bytes = _docProcessor.BuildPdfScheme(newImages.pixelizedImageSets[0].Pixels, newImages.name);
+
+            return File(bytes, "application/octet-stream", "schema.pdf");
+        }
+
+        [HttpPost("get-schema3")]
+        public ActionResult GetSchema3([FromBody] BrickImage model)
+        {
+            if (model == null || model.ImageAsPixels == null) return BadRequest();
 
             var license = _licenseService.GetLicenseByKey(model.LicenseKey);
 

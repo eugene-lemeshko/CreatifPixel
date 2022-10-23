@@ -12,5 +12,6 @@ namespace CreatifPixelLib.Models
         public string Base64ImageString { get; set; }
         public int Contrast { get; set; }
         public bool IsCombined { get; set; }
+        public int[] PixelAmountsByColor { get; set; }
     }
 }

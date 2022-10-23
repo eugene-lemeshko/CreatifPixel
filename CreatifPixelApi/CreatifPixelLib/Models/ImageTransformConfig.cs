@@ -17,5 +17,7 @@ namespace CreatifPixelLib.Models
         public string SchemaTemplateFolder { get; set; }
         public string OutputSchemaFolder { get; set; }
         public bool SaveSchemaImage { get; set; }
+        public int MediumSizeBlocksAmount { get; set; }
+        public int SmallSizeBlocksAmount { get; set; }
     }
 }
