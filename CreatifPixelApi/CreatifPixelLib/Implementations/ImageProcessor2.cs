@@ -101,10 +101,13 @@ namespace CreatifPixelLib.Implementations
             var pixelsConOriginal = Utils.GetPixels(imageOriginal);
 
             if (_options.ContrastLevels.Length == 0 || buildByIndex == 0)
-                return (null, new List<PixelizedImageSet>(1)
-                {
-                    new PixelizedImageSet { Pixels = Utils.SetPixelized(pixelsConOriginal, blockSize, blockSize, _options), Contrast = 0 }
-                });
+            {
+                var result = new PixelizedImageSet { Pixels = Utils.SetPixelized(pixelsConOriginal, blockSize, blockSize, _options), Contrast = 0 };
+                result.PixelAmountsByColor = Utils.GetPixelAmountsByColor(result.Pixels);
+                Utils.CorrectPixelColorByAmount(result, size == PixelizedImageSizes.Small ? _options.SmallSizeBlocksAmount : _options.MediumSizeBlocksAmount);
+                result.PixelAmountsByColor = Utils.GetPixelAmountsByColor(result.Pixels);
+                return (null, new List<PixelizedImageSet>(1) { result });
+            }
 
             if (buildByIndex > ((_options.ContrastLevels.Length * 2) + 1))
                 throw new ArgumentException("Build index is incorrect");
